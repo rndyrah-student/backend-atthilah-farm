@@ -12,15 +12,15 @@ class ProdukSeeder extends Seeder
     public function run()
     {
         // 1. Buat user (gunakan id, bukan user_id)
-        $penjual = User::firstOrCreate(
-            ['email' => 'penjual1@example.com'], // cari berdasarkan email
+        $admin = User::firstOrCreate(
+            ['email' => 'admin1@example.com'], // cari berdasarkan email
             [
-                'username' => 'penjual1',
+                'username' => 'admin1',
                 'password' => bcrypt('password'),
                 'nama_lengkap' => 'Penjual Ayam',
                 'no_telepon' => '081234567891',
                 'alamat' => 'Jl. Penjual Ayam',
-                'role' => 'Penjual'
+                'role' => 'Admin'
             ]
         );
 
@@ -40,7 +40,7 @@ class ProdukSeeder extends Seeder
             ['deskripsi' => 'Produk dari kambing']
         );
 
-        // 3. Buat produk — gunakan $penjual->id
+        // 3. Buat produk — gunakan $admin->id
         Produk::create([
             'kategori_id' => $kategoriAyam->kategori_id,
             'nama_produk' => 'Ayam Broiler Segar',
@@ -49,7 +49,7 @@ class ProdukSeeder extends Seeder
             'deskripsi' => 'Ayam broiler segar, siap masak',
             'foto_url' => 'https://via.placeholder.com/300?text=Ayam+Broiler',
             'stok' => 50,
-            'created_by' => $penjual->id, // ← INI YANG BENAR!
+            'created_by' => $admin->id, // ← INI YANG BENAR!
         ]);
 
         // ... (produk lainnya sama)

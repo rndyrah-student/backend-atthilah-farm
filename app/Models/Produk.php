@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Produk extends Model
 {
@@ -11,27 +11,24 @@ class Produk extends Model
 
     protected $table = 'produk';
     protected $primaryKey = 'produk_id';
-
     protected $fillable = [
-        'kategori_id',
         'nama_produk',
         'berat',
         'harga',
         'deskripsi',
         'foto_url',
         'stok',
+        'kategori_id',
         'created_by'
     ];
 
-    // Relasi ke Kategori
     public function kategori()
     {
-        return $this->belongsTo(KategoriProduk::class, 'kategori_id', 'kategori_id');
+        return $this->belongsTo(KategoriProduk::class, 'kategori_id');
     }
 
-    // Relasi ke User (yang membuat)
     public function createdBy()
     {
-        return $this->belongsTo(User::class, 'created_by', 'user_id');
+        return $this->belongsTo(User::class, 'created_by');
     }
 }
