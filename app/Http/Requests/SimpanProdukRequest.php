@@ -13,6 +13,8 @@ class SimpanProdukRequest extends FormRequest
 
     public function rules()
     {
+        \Log::info('Request Validation Data:', $this->all());
+
         return [
             'nama_produk' => 'required|string|max:255',
             'kategori_id' => 'required|exists:kategori_produk,kategori_id',
@@ -21,6 +23,7 @@ class SimpanProdukRequest extends FormRequest
             'deskripsi' => 'nullable|string',
             'foto_url' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
             'stok' => 'required|integer',
+            'created_by' => 'required|exists:users,id'
         ];
     }
 
@@ -32,6 +35,8 @@ class SimpanProdukRequest extends FormRequest
             'harga.required' => 'Harga produk harus diisi.',
             'foto_url.image' => 'File harus berupa gambar.',
             'stok.required' => 'Stok produk harus diisi.',
+            'created_by.required' => 'User pembuat harus dipilih.', 
+            'created_by.exists' => 'User tidak ditemukan.'           
         ];
     }
 }

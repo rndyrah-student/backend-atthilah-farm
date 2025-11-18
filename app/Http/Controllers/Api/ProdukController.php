@@ -26,6 +26,8 @@ class ProdukController extends Controller
     // 🔹 Tambah produk baru
     public function store(SimpanProdukRequest $request)
     {
+        \Log::info('Request Data:', $request->all());  // 🔥 Tambahkan baris ini
+        
         $data = $request->validated();
 
         if ($request->hasFile('foto_url')) {

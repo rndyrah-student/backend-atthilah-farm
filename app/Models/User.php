@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable; 
 
-    // ⚠️ Ganti nama tabel ke 'users'
     protected $table = 'users';
 
-    // ⚠️ Ganti primary key ke 'id' (default Laravel)
     protected $primaryKey = 'id';
 
     protected $fillable = [

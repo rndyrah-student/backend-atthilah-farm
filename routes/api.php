@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\KategoriProdukController;
 use App\Http\Controllers\Api\PesananController;
@@ -13,9 +14,25 @@ use App\Http\Controllers\Api\InformasiPeternakanController;
 | API Routes
 |--------------------------------------------------------------------------
 */
+// 🔐 Auth routes
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
+
+// 🔐 Protected routes (butuh token)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::get('profile', [AuthController::class, 'profile']);
+    Route::get('user', function (Request $request) {
+        return $request->user();
+    });
+});
+
+// 🔐 Forgot & Reset Password
+Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
 // 🔹 Produk
-Route::apiResource('produk', ProdukController::class);
+Route::apiResource('produk', ProdukController::class)->middleware('auth:sanctum');
 
 // 🔹 Kategori Produk
 Route::apiResource('kategori-produk', KategoriProdukController::class);
