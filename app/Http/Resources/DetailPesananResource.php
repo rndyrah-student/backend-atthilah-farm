@@ -2,18 +2,23 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DetailPesananResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(Request $request): array
+    public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->detail_id,
+            'pesanan_id' => $this->pesanan_id,
+            'produk_id' => $this->produk_id,
+            'nama_produk' => $this->produk ? $this->produk->nama_produk : null,
+            'jumlah' => $this->jumlah,
+            'harga_satuan' => $this->harga_satuan,
+            'subtotal' => $this->subtotal,
+            'dibuat_pada' => $this->created_at,
+            'diperbarui_pada' => $this->updated_at,
+            'produk' => $this->whenLoaded('produk') ? new ProdukResource($this->produk) : null,
+        ];
     }
 }

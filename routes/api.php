@@ -25,6 +25,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', function (Request $request) {
         return $request->user();
     });
+
+    // 🔹 Produk (hanya admin)
+    Route::apiResource('produk', ProdukController::class);
+
+    // 🔹 Pemesanan (pelanggan bisa buat pesanan)
+    Route::apiResource('pesanan', PesananController::class);
+    Route::apiResource('detail-pesanan', DetailPesananController::class);
 });
 
 // 🔐 Forgot & Reset Password
