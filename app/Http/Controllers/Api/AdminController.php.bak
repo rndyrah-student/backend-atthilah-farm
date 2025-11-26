@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Pesanan;
+use App\Models\Produk;
+use App\Models\User;
+use Illuminate\Http\Request;
+
+class AdminController extends Controller
+{
+    public function getStats(Request $request)
+    {
+        // Hanya admin yang bisa akses
+        if ($request->user()->role !== 'admin') {
+            return response()->json(['message' => 'Akses ditolak'], 403);
+        }
+
+        $stats = [
+            'totalProducts' => Produk::count(),
+            'totalOrders' => Pesanan::count(),
+            'totalUsers' => User::count(),
+        ];
+
+        return response()->json($stats);
+    }
+
+    public function getUsers(Request $request)
+    {
+        // Hanya admin yang bisa akses
+        if ($request->user()->role !== 'admin') {
+            return response()->json(['message' => 'Akses ditolak'], 403);
+        }
+
+        return response()->json(User::all());
+    }
+}

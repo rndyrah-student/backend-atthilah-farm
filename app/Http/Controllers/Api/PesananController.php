@@ -11,10 +11,19 @@ use Illuminate\Support\Facades\DB;
 
 class PesananController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+    }
+
     public function index(Request $request)
     {
-        // Ambil pesanan user yang login
-        $pesanan = Pesanan::where('pelanggan_id', $request->user()->id)
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
+        $pesanan = Pesanan::where('pelanggan_id', $user->id)
                          ->with(['detail_pesanan.produk', 'faktur'])
                          ->orderBy('tanggal_pesanan', 'desc')
                          ->get();
@@ -35,7 +44,7 @@ class PesananController extends Controller
     {
         $data = $request->validated();
         $data['pelanggan_id'] = $request->user()->id;
-        $data['status'] = 'Menunggu'; // default status
+        $data['status'] = 'Menunggu';
         $data['tanggal_pesanan'] = now();
 
         $pesanan = Pesanan::create($data);
@@ -47,7 +56,6 @@ class PesananController extends Controller
     {
         $pesanan = Pesanan::where('pesanan_id', $id)->firstOrFail();
         
-        // Hanya admin yang bisa update status
         if ($request->user()->role !== 'admin' && $request->has('status')) {
             return response()->json(['message' => 'Akses ditolak'], 403);
         }
@@ -61,7 +69,6 @@ class PesananController extends Controller
     {
         $pesanan = Pesanan::where('pesanan_id', $id)->firstOrFail();
         
-        // Hanya admin atau pembuat pesanan yang bisa hapus
         if ($pesanan->pelanggan_id !== $request->user()->id && $request->user()->role !== 'admin') {
             return response()->json(['message' => 'Akses ditolak'], 403);
         }

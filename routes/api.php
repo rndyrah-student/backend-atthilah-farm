@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\PesananController;
 use App\Http\Controllers\Api\DetailPesananController;
 use App\Http\Controllers\Api\FakturController;
 use App\Http\Controllers\Api\InformasiPeternakanController;
+use App\Http\Controllers\Api\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +27,9 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    // 🔹 Produk (hanya admin)
+    // 🔹 (hanya admin)
+    //Route::get('admin/stats', [AdminController::class, 'getStats'])->middleware('auth:sanctum');
+    Route::get('users', [AdminController::class, 'getUsers']);
     Route::apiResource('produk', ProdukController::class);
 
     // 🔹 Pemesanan (pelanggan bisa buat pesanan)

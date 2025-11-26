@@ -16,8 +16,3 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-
-// 🔐 Route login untuk forgot password (tidak perlu view)
-Route::get('/login', function () {
-    return response()->json(['message' => 'Login page']);
-})->name('login');
