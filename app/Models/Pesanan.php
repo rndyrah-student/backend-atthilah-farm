@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Pesanan extends Model
 {
@@ -36,5 +37,11 @@ class Pesanan extends Model
     public function faktur()
     {
         return $this->hasOne(Faktur::class, 'pesanan_id');
+    }
+
+    protected function totalHarga(): Attribute
+    {
+    return Attribute::make(
+        get: fn () => $this->detail_pesanan->sum(fn ($detail) => $detail->jumlah * $detail->harga_satuan));
     }
 }

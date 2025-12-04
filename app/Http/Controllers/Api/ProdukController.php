@@ -26,7 +26,7 @@ class ProdukController extends Controller
     // 🔹 Tambah produk baru
     public function store(SimpanProdukRequest $request)
     {
-        \Log::info('Request Data:', $request->all());  // 🔥 Tambahkan baris ini
+        \Log::info('Request Data:', $request->all());
         
         $data = $request->validated();
 

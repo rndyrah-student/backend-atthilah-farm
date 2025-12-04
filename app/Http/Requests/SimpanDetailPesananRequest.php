@@ -14,10 +14,8 @@ class SimpanDetailPesananRequest extends FormRequest
     public function rules()
     {
         return [
-            'pesanan_id' => 'required|exists:pesanan,pesanan_id',
             'produk_id' => 'required|exists:produk,produk_id',
             'jumlah' => 'required|integer|min:1',
-            'harga_satuan' => 'required|numeric|min:0',
         ];
     }
 

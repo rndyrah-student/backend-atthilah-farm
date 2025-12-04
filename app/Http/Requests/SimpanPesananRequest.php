@@ -20,6 +20,7 @@ class SimpanPesananRequest extends FormRequest
             'alamat_pengiriman' => 'required|string|max:500',
             'catatan' => 'nullable|string|max:500',
             'tanggal_pesanan' => 'nullable|date',
+            'tanggal_pesanan' => 'nullable|date',
             'status' => 'nullable|in:Menunggu,Konfirmasi,Dikonfirmasi,Ditolak,Selesai',
         ];
     }

@@ -14,6 +14,12 @@ class KategoriProdukResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'kategori_id' => $this->kategori_id,
+            'nama_kategori' => $this->nama_kategori,
+            'deskripsi' => $this->deskripsi,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+        ];
     }
 }

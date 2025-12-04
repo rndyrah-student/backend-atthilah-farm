@@ -10,6 +10,7 @@ use App\Models\Pesanan;
 use App\Models\Produk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class DetailPesananController extends Controller
 {
@@ -34,21 +35,48 @@ class DetailPesananController extends Controller
         return response()->json(new DetailPesananResource($detail_pesanan));
     }
 
-    public function store(SimpanDetailPesananRequest $request)
+    public function store(Request $request, $pesanan_id) // ← dapatkan dari URL
     {
-        $data = $request->validated();
-        
-        // Ambil harga produk untuk jaga-jaga
-        $produk = Produk::findOrFail($data['produk_id']);
-        $data['harga_satuan'] = $produk->harga;
-        $data['subtotal'] = $data['jumlah'] * $data['harga_satuan'];
+        // ✅ Validasi HANYA field yang dikirim user
+        $validator = Validator::make($request->all(), [
+            'produk_id' => 'required|exists:produk,produk_id',
+            'jumlah'    => 'required|integer|min:1',
+        ]);
 
-        $detail_pesanan = DetailPesanan::create($data);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-        // Update total harga di pesanan
-        $this->updateTotalHarga($data['pesanan_id']);
+        // ✅ Ambil harga_satuan dari database (bukan dari request)
+        $produk = Produk::findOrFail($request->produk_id);
+        $harga_satuan = $produk->harga; // atau $produk->harga, sesuaikan dengan field di modelmu
 
-        return response()->json(new DetailPesananResource($detail_pesanan), 201);
+        // ✅ Gunakan $pesanan_id dari parameter URL
+        // (opsional: verifikasi apakah pesanan ini milik user yang login)
+        $pesanan = Pesanan::where('pesanan_id', $pesanan_id)
+                        ->where('pelanggan_id', $request->user()->id)
+                        ->firstOrFail();
+
+        // Cek apakah item sudah ada → update jumlah
+        $detail = DetailPesanan::where('pesanan_id', $pesanan_id)
+                            ->where('produk_id', $request->produk_id)
+                            ->first();
+
+        if ($detail) {
+            $detail->jumlah += $request->jumlah;
+            $detail->save();
+        } else {
+            $subtotal = $request->jumlah * $harga_satuan;
+            DetailPesanan::create([
+                'pesanan_id'   => $pesanan_id,   // ← dari URL
+                'produk_id'    => $request->produk_id,
+                'jumlah'       => $request->jumlah,
+                'harga_satuan' => $harga_satuan, // ← dari database
+                'subtotal' => $subtotal,
+            ]);
+        }
+
+        return response()->json(['message' => 'Item berhasil ditambahkan ke pesanan'], 201);
     }
 
     public function update(SimpanDetailPesananRequest $request, $id)
@@ -65,9 +93,6 @@ class DetailPesananController extends Controller
         
         $detail_pesanan->update($data);
 
-        // Update total harga di pesanan
-        $this->updateTotalHarga($detail_pesanan->pesanan_id);
-
         return response()->json(new DetailPesananResource($detail_pesanan));
     }
 
@@ -82,18 +107,5 @@ class DetailPesananController extends Controller
 
         $pesanan_id = $detail_pesanan->pesanan_id;
         $detail_pesanan->delete();
-
-        // Update total harga di pesanan
-        $this->updateTotalHarga($pesanan_id);
-
-        return response()->json(['message' => 'Detail pesanan berhasil dihapus']);
-    }
-
-    private function updateTotalHarga($pesanan_id)
-    {
-        $total = DetailPesanan::where('pesanan_id', $pesanan_id)
-                             ->sum(DB::raw('jumlah * harga_satuan'));
-        
-        Pesanan::where('pesanan_id', $pesanan_id)->update(['total_harga' => $total]);
     }
 }

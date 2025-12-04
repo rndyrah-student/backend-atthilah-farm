@@ -44,7 +44,7 @@ class PesananController extends Controller
     {
         $data = $request->validated();
         $data['pelanggan_id'] = $request->user()->id;
-        $data['status'] = 'Menunggu';
+        $data['status'] = 'Menunggu Konfirmasi';
         $data['tanggal_pesanan'] = now();
 
         $pesanan = Pesanan::create($data);
@@ -52,15 +52,26 @@ class PesananController extends Controller
         return response()->json(new PesananResource($pesanan), 201);
     }
 
-    public function update(SimpanPesananRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $pesanan = Pesanan::where('pesanan_id', $id)->firstOrFail();
-        
-        if ($request->user()->role !== 'admin' && $request->has('status')) {
+        $user = $request->user();
+
+        // Hanya admin yang boleh akses endpoint ini
+        if ($user->role !== 'Admin') {
             return response()->json(['message' => 'Akses ditolak'], 403);
         }
 
-        $pesanan->update($request->validated());
+        // Validasi status
+        $allowedStatuses = ['Menunggu Konfirmasi', 'Dikonfirmasi', 'Ditolak', 'Diproses', 'Selesai'];
+        if ($request->has('status')) {
+            if (!in_array($request->status, $allowedStatuses)) {
+                return response()->json(['message' => 'Status tidak valid'], 422);
+            }
+            $pesanan->status = $request->status;
+        }
+
+        $pesanan->save();
 
         return response()->json(new PesananResource($pesanan));
     }

@@ -29,7 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // 🔹 (hanya admin)
     //Route::get('admin/stats', [AdminController::class, 'getStats'])->middleware('auth:sanctum');
-    Route::get('users', [AdminController::class, 'getUsers']);
+    //Route::get('users', [AdminController::class, 'getUsers']);
     Route::apiResource('produk', ProdukController::class);
 
     // 🔹 Pemesanan (pelanggan bisa buat pesanan)
@@ -45,13 +45,26 @@ Route::post('reset-password', [AuthController::class, 'resetPassword']);
 Route::apiResource('produk', ProdukController::class)->middleware('auth:sanctum');
 
 // 🔹 Kategori Produk
-Route::apiResource('kategori-produk', KategoriProdukController::class);
+// ✅ Publik: hanya baca
+Route::get('kategori-produk', [KategoriProdukController::class, 'index']);
+Route::get('kategori-produk/{id}', [KategoriProdukController::class, 'show']);
 
-// 🔹 Pesanan
-Route::apiResource('pesanan', PesananController::class);
+// 🔒 Admin: tulis & ubah
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('kategori-produk', [KategoriProdukController::class, 'store']);
+    Route::put('kategori-produk/{id}', [KategoriProdukController::class, 'update']);
+    Route::delete('kategori-produk/{id}', [KategoriProdukController::class, 'destroy']);
+});
 
-// 🔹 Detail Pesanan
-Route::apiResource('detail-pesanan', DetailPesananController::class);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('pesanan', PesananController::class);
+    
+    // HANYA route untuk menambah detail ke pesanan tertentu
+    Route::post('pesanan/{pesanan_id}/detail-pesanan', [DetailPesananController::class, 'store']);
+    
+    // Opsional: lihat semua detail dari satu pesanan
+    Route::get('pesanan/{pesanan_id}/detail-pesanan', [DetailPesananController::class, 'index']);
+});
 
 // 🔹 Faktur
 Route::apiResource('faktur', FakturController::class);

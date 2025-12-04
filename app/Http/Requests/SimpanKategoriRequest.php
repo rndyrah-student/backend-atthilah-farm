@@ -6,23 +6,18 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class SimpanKategoriRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
+    public function authorize()
     {
-        return false;
+        return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
+    public function rules()
     {
+        \Log::info('Request Validation Data:', $this->all());
+        
         return [
-            //
+            'nama_kategori' => 'required|string|max:255|unique:kategori_produk,nama_kategori',
+            'deskripsi' => 'nullable|string'
         ];
     }
 }
