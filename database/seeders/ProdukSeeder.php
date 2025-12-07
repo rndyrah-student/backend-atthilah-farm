@@ -11,20 +11,31 @@ class ProdukSeeder extends Seeder
 {
     public function run()
     {
-        // 1. Buat user (gunakan id, bukan user_id)
         $admin = User::firstOrCreate(
-            ['email' => 'admin1@example.com'], // cari berdasarkan email
+            ['email' => 'admin1@example.com'],
             [
                 'username' => 'admin1',
-                'password' => bcrypt('password'),
-                'nama_lengkap' => 'Penjual Ayam',
+                'password' => bcrypt('password123'),
+                'nama_lengkap' => 'Admin Satu',
                 'no_telepon' => '081234567891',
-                'alamat' => 'Jl. Penjual Ayam',
+                'alamat' => 'Jebres',
                 'role' => 'Admin'
             ]
         );
 
-        // 2. Pastikan kategori ada
+        User::firstOrCreate(
+            ['email' => 'cust1@example.com'],
+            [
+                'username' => 'cust1',
+                'password' => bcrypt('password123'),
+                'nama_lengkap' => 'Customer Satu',
+                'no_telepon' => '081234567891',
+                'alamat' => 'Jebres',
+                'role' => 'Pelanggan'
+            ]
+        );
+
+
         $kategoriAyam = KategoriProduk::firstOrCreate(
             ['nama_kategori' => 'Ayam'],
             ['deskripsi' => 'Produk dari ayam']
@@ -47,11 +58,29 @@ class ProdukSeeder extends Seeder
             'berat' => 1.5,
             'harga' => 35000,
             'deskripsi' => 'Ayam broiler segar, siap masak',
-            'foto_url' => 'https://via.placeholder.com/300?text=Ayam+Broiler',
+            'foto_url' => '',
             'stok' => 50,
-            'created_by' => $admin->id, // ← INI YANG BENAR!
+            'created_by' => $admin->id,
         ]);
-
-        // ... (produk lainnya sama)
+        Produk::create([
+            'kategori_id' => $kategoriSapi->kategori_id,
+            'nama_produk' => 'Daging Sapi Premium',
+            'berat' => 2.0,
+            'harga' => 150000,
+            'deskripsi' => 'Daging sapi premium, empuk dan lezat',
+            'foto_url' => '',
+            'stok' => 30,
+            'created_by' => $admin->id,
+        ]);
+        Produk::create([
+            'kategori_id' => $kategoriKambing->kategori_id,
+            'nama_produk' => 'Kambing Guling Siap Saji',
+            'berat' => 3.0,
+            'harga' => 250000,
+            'deskripsi' => 'Kambing guling siap saji untuk acara spesial',
+            'foto_url' => '',
+            'stok' => 20,
+            'created_by' => $admin->id,
+        ]);
     }
 }

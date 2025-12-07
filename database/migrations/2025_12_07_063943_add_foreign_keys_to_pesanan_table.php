@@ -6,17 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
         Schema::table('pesanan', function (Blueprint $table) {
-            $table->dropColumn('total_harga');
+            $table->foreign(['pelanggan_id'])->references(['id'])->on('users')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
         Schema::table('pesanan', function (Blueprint $table) {
-            $table->decimal('total_harga', 15, 2)->default(0);
+            $table->dropForeign('pesanan_pelanggan_id_foreign');
         });
     }
 };

@@ -4,24 +4,30 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFakturTable extends Migration
+return new class extends Migration
 {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
         Schema::create('faktur', function (Blueprint $table) {
-            $table->id('faktur_id');
-            $table->foreignId('pesanan_id')->constrained('pesanan', 'pesanan_id')->onDelete('cascade');
+            $table->bigIncrements('faktur_id');
+            $table->unsignedBigInteger('pesanan_id')->index('faktur_pesanan_id_foreign');
             $table->string('nomor_faktur')->unique();
-            $table->dateTime('tanggal_faktur')->default(now());
-            $table->float('total_pembayaran');
+            $table->dateTime('tanggal_faktur')->default('2025-11-12 19:09:10');
+            $table->double('total_pembayaran');
             $table->string('metode_pembayaran')->nullable();
             $table->enum('status_pembayaran', ['Belum Dibayar', 'Sudah Dibayar', 'Gagal'])->default('Belum Dibayar');
             $table->timestamps();
         });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
         Schema::dropIfExists('faktur');
     }
-}
+};
