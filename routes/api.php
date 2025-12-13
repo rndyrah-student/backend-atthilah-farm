@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\KategoriProdukController;
@@ -27,11 +28,6 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    // 🔹 (hanya admin)
-    //Route::get('admin/stats', [AdminController::class, 'getStats'])->middleware('auth:sanctum');
-    //Route::get('users', [AdminController::class, 'getUsers']);
-    Route::apiResource('produk', ProdukController::class);
-
     // 🔹 Pemesanan (pelanggan bisa buat pesanan)
     Route::apiResource('pesanan', PesananController::class);
     Route::apiResource('detail-pesanan', DetailPesananController::class);
@@ -42,7 +38,14 @@ Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
 // 🔹 Produk
-Route::apiResource('produk', ProdukController::class)->middleware('auth:sanctum');
+Route::get('/produk', [ProdukController::class, 'index']);
+Route::get('/produk/{id}', [ProdukController::class, 'show']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/produk', [ProdukController::class, 'store']);
+    Route::put('/produk/{id}', [ProdukController::class, 'update']);
+    Route::delete('/produk/{id}', [ProdukController::class, 'destroy']);
+});
 
 // 🔹 Kategori Produk
 // ✅ Publik: hanya baca
@@ -54,6 +57,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('kategori-produk', [KategoriProdukController::class, 'store']);
     Route::put('kategori-produk/{id}', [KategoriProdukController::class, 'update']);
     Route::delete('kategori-produk/{id}', [KategoriProdukController::class, 'destroy']);
+});
+
+Route::middleware('auth:sanctum')->get('/debug-user', function (Request $request) {
+    return response()->json([
+        'user_id' => $request->user()->id,
+        'email' => $request->user()->email,
+        'role' => $request->user()->role,
+    ]);
 });
 
 Route::middleware('auth:sanctum')->group(function () {

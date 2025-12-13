@@ -23,10 +23,17 @@ class PesananController extends Controller
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
 
-        $pesanan = Pesanan::where('pelanggan_id', $user->id)
-                         ->with(['detail_pesanan.produk', 'faktur'])
-                         ->orderBy('tanggal_pesanan', 'desc')
-                         ->get();
+        $query = Pesanan::with(['detail_pesanan.produk', 'faktur']);
+
+        // Jika user adalah admin, tampilkan SEMUA pesanan
+        if (strtolower($user->role) === 'admin') {
+            // Tampilkan semua
+        } else {
+            // Jika customer, hanya tampilkan pesanan milik sendiri
+            $query->where('pelanggan_id', $user->id);
+        }
+
+        $pesanan = $query->orderBy('tanggal_pesanan', 'desc')->get();
         
         return response()->json(PesananResource::collection($pesanan));
     }

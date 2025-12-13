@@ -26,9 +26,8 @@ class ProdukController extends Controller
     // 🔹 Tambah produk baru
     public function store(SimpanProdukRequest $request)
     {
-        \Log::info('Request Data:', $request->all());
-        
         $data = $request->validated();
+        $data['created_by'] = auth()->id();
 
         if ($request->hasFile('foto_url')) {
             $path = $request->file('foto_url')->store('produk', 'public');
