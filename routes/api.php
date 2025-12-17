@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\DetailPesananController;
 use App\Http\Controllers\Api\FakturController;
 use App\Http\Controllers\Api\InformasiPeternakanController;
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\CartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // 🔹 Kategori Produk
-// ✅ Publik: hanya baca
+//     Publik: hanya baca
 Route::get('kategori-produk', [KategoriProdukController::class, 'index']);
 Route::get('kategori-produk/{id}', [KategoriProdukController::class, 'show']);
 
@@ -57,6 +58,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('kategori-produk', [KategoriProdukController::class, 'store']);
     Route::put('kategori-produk/{id}', [KategoriProdukController::class, 'update']);
     Route::delete('kategori-produk/{id}', [KategoriProdukController::class, 'destroy']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('cart', CartController::class)->except(['create', 'edit', 'show']);
 });
 
 Route::middleware('auth:sanctum')->get('/debug-user', function (Request $request) {

@@ -18,7 +18,7 @@ class SimpanProdukRequest extends FormRequest
         return [
             'nama_produk' => 'required|string|max:255',
             'kategori_id' => 'required|exists:kategori_produk,kategori_id',
-            'berat' => 'required|numeric',
+            'berat' => 'nullable|numeric',
             'harga' => 'required|numeric',
             'deskripsi' => 'nullable|string',
             'foto_url' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
