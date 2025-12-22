@@ -19,10 +19,23 @@ class Pesanan extends Model
         'no_telepon_pelanggan',
         'alamat_pengiriman',
         'tanggal_pesanan',
-        'total_harga',
         'status',
         'catatan'
     ];
+
+        // ✅ Tambahkan field 'total' saat serialize ke JSON
+    protected $appends = ['total'];
+
+    // ✅ Hitung total dari detail_pesanan
+    public function getTotalAttribute()
+    {
+        // Jika relasi sudah dimuat, gunakan koleksi
+        if ($this->relationLoaded('detail_pesanan')) {
+            return $this->detail_pesanan->sum('subtotal');
+        }
+        // Jika belum, lakukan query
+        return $this->detail_pesanan()->sum('subtotal');
+    }
 
     public function pelanggan()
     {
@@ -31,7 +44,7 @@ class Pesanan extends Model
 
     public function detail_pesanan()
     {
-        return $this->hasMany(DetailPesanan::class, 'pesanan_id');
+        return $this->hasMany(DetailPesanan::class, 'pesanan_id', 'pesanan_id');
     }
 
     public function faktur()

@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\FakturController;
 use App\Http\Controllers\Api\InformasiPeternakanController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\PelangganController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +81,10 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Opsional: lihat semua detail dari satu pesanan
     Route::get('pesanan/{pesanan_id}/detail-pesanan', [DetailPesananController::class, 'index']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/pelanggan', [PelangganController::class, 'index']);
 });
 
 // 🔹 Faktur

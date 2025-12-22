@@ -17,11 +17,11 @@ class PesananResource extends JsonResource
             'no_telepon_pelanggan' => $this->no_telepon_pelanggan,
             'alamat_pengiriman' => $this->alamat_pengiriman,
             'tanggal_pesanan' => $this->tanggal_pesanan,
-            'total_harga' => $this->total_harga,
             'status' => $this->status,
             'catatan' => $this->catatan,
             'dibuat_pada' => $this->created_at,
             'diperbarui_pada' => $this->updated_at,
+            'total' => $this->total,
             'detail_pesanan' => DetailPesananResource::collection($this->whenLoaded('detail_pesanan')),
             'faktur' => $this->whenLoaded('faktur') ? new FakturResource($this->faktur) : null,
         ];

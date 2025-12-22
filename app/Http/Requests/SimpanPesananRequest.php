@@ -11,19 +11,20 @@ class SimpanPesananRequest extends FormRequest
         return true;
     }
 
-    public function rules()
-    {
-        return [
-            'nama_pelanggan' => 'required|string|max:255',
-            'email_pelanggan' => 'required|email|max:255',
-            'no_telepon_pelanggan' => 'required|string|max:20',
-            'alamat_pengiriman' => 'required|string|max:500',
-            'catatan' => 'nullable|string|max:500',
-            'tanggal_pesanan' => 'nullable|date',
-            'tanggal_pesanan' => 'nullable|date',
-            'status' => 'nullable|in:Menunggu,Konfirmasi,Dikonfirmasi,Ditolak,Selesai',
-        ];
-    }
+public function rules()
+{
+    return [
+        'nama_pelanggan' => 'required|string|max:255',
+        'email_pelanggan' => 'required|email|max:255',
+        'no_telepon_pelanggan' => 'required|string|max:20',
+        'alamat_pengiriman' => 'required|string|max:500',
+        'catatan' => 'nullable|string|max:500',
+        'produk' => 'required|array|min:1',
+        'produk.*.produk_id' => 'required|exists:produk,produk_id',
+        'produk.*.jumlah' => 'required|integer|min:1',
+    ];
+}
+
 
     public function messages()
     {
